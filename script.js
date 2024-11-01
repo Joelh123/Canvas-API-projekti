@@ -19,15 +19,8 @@ const bullet = {
     h: 25,
     speed: 5,
     dy: 10,
+    pierce: 0
 }
-
-
-// ctx.fillRect(55, obstacle.y, obstacle.w, obstacle.h),
-// ctx.fillRect(180, obstacle.y, obstacle.w, obstacle.h),
-// ctx.fillRect(305, obstacle.y, obstacle.w, obstacle.h),
-// ctx.fillRect(430, obstacle.y, obstacle.w, obstacle.h),
-// ctx.fillRect(555, obstacle.y, obstacle.w, obstacle.h),
-// ctx.fillRect(680, obstacle.y, obstacle.w, obstacle.h)
 
 const obstacles = [
     {
@@ -173,6 +166,17 @@ function keyDown(e){
     }
 }
 
+function bulletSpeedUp() {
+    bullet.speed += 1
+}
+
+function bulletWidth() {
+    bullet.w += 2
+}
+
+function bulletPierceUp() {
+    bullet.pierce += 1
+}
 
 function moveLeft(){
     player.dx = -player.speed;
