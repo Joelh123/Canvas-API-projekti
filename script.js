@@ -21,6 +21,59 @@ const bullet = {
     dy: 10,
 }
 
+
+// ctx.fillRect(55, obstacle.y, obstacle.w, obstacle.h),
+// ctx.fillRect(180, obstacle.y, obstacle.w, obstacle.h),
+// ctx.fillRect(305, obstacle.y, obstacle.w, obstacle.h),
+// ctx.fillRect(430, obstacle.y, obstacle.w, obstacle.h),
+// ctx.fillRect(555, obstacle.y, obstacle.w, obstacle.h),
+// ctx.fillRect(680, obstacle.y, obstacle.w, obstacle.h)
+
+const obstacles = [
+    {
+        w: 50,
+        h: 50,
+        x: 55,
+        y: 430,
+        health: 3
+    },
+    {
+        w: 50,
+        h: 50,
+        x: 180,
+        y: 430,
+        health: 3
+    },
+    {
+        w: 50,
+        h: 50,
+        x: 305,
+        y: 430,
+        health: 3
+    },
+    {
+        w: 50,
+        h: 50,
+        x: 430,
+        y: 430,
+        health: 3
+    },
+    {
+        w: 50,
+        h: 50,
+        x: 555,
+        y: 430,
+        health: 3
+    },
+    {
+        w: 50,
+        h: 50,
+        x: 680,
+        y: 430,
+        health: 3
+    }
+]
+
 function drawPlayer(){
     ctx.drawImage(image, player.x, player.y, player.w, player.h)
 }
@@ -48,12 +101,39 @@ function detectWalls(){
     }
 }
 
+function drawObstacles() {
+    ctx.fillStyle = "white";
+    
+    for (const box of obstacles) {
+        if (box.health == 0) {
+            continue;
+        }
+        ctx.fillRect(box.x, box.y, box.w, box.h)
+    }
+}
+
+function detectObstacles() {
+    for (const box of obstacles) {
+        if (bullet.y < box.y + box.h && bullet.x + bullet.w > box.x && bullet.x < box.x + box.w) {
+            bulletFired = false
+            box.health -= 1
+            bullet.x = player.x + player.w / 2
+            bullet.y = player.y
+            console.log(box.health)
+        }
+    }
+}
+
 function update(){
     clear();
     drawPlayer();
     newPos();
-    drawBullet();
-    bulletNewPos();
+    if (bulletFired) {
+        drawBullet();
+        bulletNewPos();
+    }
+    drawObstacles();
+    detectObstacles();
     requestAnimationFrame(update);
 }
 
