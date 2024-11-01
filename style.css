@@ -19,7 +19,7 @@ body {
     border-radius: 5px;
 }
 
-#source, #bulletImg {
+#playerImage, #bulletImage {
     display: none;
 }
 

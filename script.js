@@ -1,6 +1,7 @@
 const canvas = document.getElementById('canvas');
 const ctx = canvas.getContext('2d');
-const image = document.getElementById('source');
+const image = document.getElementById('playerImage');
+const bulletImage = document.getElementById('bulletImage');
 let bulletFired = false;
 
 const player = {
@@ -13,8 +14,8 @@ const player = {
 }
 
 const bullet = {
-    w: 5,
-    h: 5,
+    w: 15,
+    h: 25,
     speed: 5,
     dy: 10,
 }
@@ -60,8 +61,7 @@ function bulletNewPos(){
 }
 
 function drawBullet(){
-    ctx.fillStyle = 'white'
-    ctx.fillRect(bullet.x, bullet.y, bullet.w, bullet.h); 
+    ctx.drawImage(bulletImage, bullet.x, bullet.y, bullet.w, bullet.h)
 }
 
 function shoot(){
@@ -76,7 +76,7 @@ function keyDown(e){
         moveRight();
     } else if (e.key === 'ArrowLeft' || e.key === 'Left') {
         moveLeft();   
-    } else if (e.key === ' ') {
+    } else if (e.key === ' ' || e.key === 'ArrowUp' || e.key === 'Up') {
         if (! bulletFired){
             //console.log("Toimii!")
             shoot()
