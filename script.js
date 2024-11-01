@@ -29,7 +29,6 @@ function clear(){
 
 function newPos(){
     player.x += player.dx;
-
     detectWalls();
 }
 
@@ -40,14 +39,6 @@ function detectWalls(){
 
     if (player.x + player.w > canvas.width) {
         player.x = canvas.width - player.w;
-    }
-
-    if (player.y < 0) {
-        player.y = 0;
-    }
-
-    if (player.y + player.h > canvas.height) {
-        player.y = canvas.height - player.h;
     }
 
     if (bullet.y < 0) {
