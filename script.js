@@ -11,6 +11,13 @@ const player = {
     dx: 0,
 }
 
+const bullet = {
+    w: 5,
+    h: 5,
+    speed: 5,
+    dy: 10,
+}
+
 function drawPlayer(){
     ctx.drawImage(image, player.x, player.y, player.w, player.h)
 }
@@ -46,20 +53,37 @@ function detectWalls(){
 function update(){
     clear();
     drawPlayer();
-
     newPos();
-
+    drawBullet();
+    bulletNewPos();
     requestAnimationFrame(update);
 }
 
+function bulletNewPos(){
+    bullet.y -= bullet.dy
+}
+
+function drawBullet(){
+    ctx.fillRect(bullet.x, bullet.y, bullet.w, bullet.h); 
+}
+
+function shoot(){
+    bullet.x = player.x
+    bullet.y = player.y
+}
+
 function keyDown(e){
-    console.log(e.key);
+    //console.log(e.key);
 
     if (e.key === 'ArrowRight' || e.key === 'Right') {
         moveRight();
     } else if (e.key === 'ArrowLeft' || e.key === 'Left') {
         moveLeft();   
+    } else if (e.key === ' ') {
+        //console.log("Toimii!")
+        shoot()
     }
+
 }
 
 
