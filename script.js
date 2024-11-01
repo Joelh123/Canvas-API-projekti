@@ -5,8 +5,8 @@ const image = document.getElementById('source');
 const player = {
     w: 50,
     h: 70,
-    x: 20,
-    y: 200,
+    x: 400,
+    y: 415,
     speed: 5,
     dx: 0,
 }
@@ -21,7 +21,6 @@ function clear(){
 
 function newPos(){
     player.x += player.dx;
-    player.y += player.dy;
 
     detectWalls();
 }
@@ -60,7 +59,7 @@ function keyDown(e){
         moveRight();
     } else if (e.key === 'ArrowLeft' || e.key === 'Left') {
         moveLeft();   
-}
+    }
 }
 
 

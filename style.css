@@ -15,7 +15,8 @@ body {
 }
 
 #canvas {
-    background-color: rgb(56, 56, 56);
+    background: rgb(56, 56, 56);
+    border-radius: 5px;
 }
 
 #source {
