@@ -105,7 +105,7 @@ function drawObstacles() {
     ctx.fillStyle = "white";
     
     for (const box of obstacles) {
-        if (box.health == 0) {
+        if (box.health <= 0) {
             continue;
         }
         ctx.fillRect(box.x, box.y, box.w, box.h)
