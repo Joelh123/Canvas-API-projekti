@@ -1,6 +1,7 @@
 const canvas = document.getElementById('canvas');
 const ctx = canvas.getContext('2d');
 const image = document.getElementById('source');
+let bulletFired = false;
 
 const player = {
     w: 50,
@@ -48,6 +49,10 @@ function detectWalls(){
     if (player.y + player.h > canvas.height) {
         player.y = canvas.height - player.h;
     }
+
+    if (bullet.y < 0) {
+        bulletFired = false;
+    }
 }
 
 function update(){
@@ -64,11 +69,12 @@ function bulletNewPos(){
 }
 
 function drawBullet(){
+    ctx.fillStyle = 'white'
     ctx.fillRect(bullet.x, bullet.y, bullet.w, bullet.h); 
 }
 
 function shoot(){
-    bullet.x = player.x
+    bullet.x = player.x + player.w / 2
     bullet.y = player.y
 }
 
@@ -80,8 +86,11 @@ function keyDown(e){
     } else if (e.key === 'ArrowLeft' || e.key === 'Left') {
         moveLeft();   
     } else if (e.key === ' ') {
-        //console.log("Toimii!")
-        shoot()
+        if (! bulletFired){
+            //console.log("Toimii!")
+            shoot()
+            bulletFired = true;
+        }
     }
 
 }
