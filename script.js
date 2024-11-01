@@ -7,7 +7,7 @@ const player = {
     w: 50,
     h: 70,
     x: 400,
-    y: 415,
+    y: 560,
     speed: 5,
     dx: 0,
 }
