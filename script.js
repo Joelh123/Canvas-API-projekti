@@ -3,6 +3,7 @@ const ctx = canvas.getContext('2d');
 const image = document.getElementById('playerImage');
 const bulletImage = document.getElementById('bulletImage');
 let bulletFired = false;
+let paused = false;
 
 const player = {
     w: 50,
@@ -70,8 +71,13 @@ function shoot(){
 }
 
 function keyDown(e){
-    //console.log(e.key);
-
+    if (e.key === 'Escape'){
+    paused = !paused;
+    }
+    console.log(e.key);
+    if (paused){
+        return
+    }
     if (e.key === 'ArrowRight' || e.key === 'Right') {
         moveRight();
     } else if (e.key === 'ArrowLeft' || e.key === 'Left') {
@@ -83,7 +89,6 @@ function keyDown(e){
             bulletFired = true;
         }
     }
-
 }
 
 
