@@ -99,8 +99,8 @@ function drawObstacles() {
     
     for (const box of obstacles) {
         if (box.health <= 0) {
-            box.w = 0
-            box.h = 0
+            box.y += 1000
+            box.x += 1000
             continue;
         }
         ctx.fillRect(box.x, box.y, box.w, box.h)
