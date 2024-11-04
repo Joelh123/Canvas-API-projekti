@@ -23,7 +23,7 @@ const bullet = {
     w: 15,
     h: 25,
     speed: 10,
-    pierce: 0
+    pierceLvl: 1
 }
 
 const obstacles = [
@@ -113,12 +113,22 @@ function drawObstacles() {
 
 function detectObstacles() {
     for (const box of obstacles) {
-        if (bullet.y < box.y + box.h && bullet.x + bullet.w > box.x && bullet.x < box.x + box.w) {
-            bulletFired = false
-            box.health -= 1
-            bullet.x = player.x + player.w / 2
-            bullet.y = player.y
-            console.log(box.health)
+        if (bullet.y < box.y + box.h && bullet.x + bullet.w > box.x && bullet.x < box.x + box.w && !box.hit) {
+            box.hit = true;
+            box.health -= 1;
+            bullet.pierceCount -= 1;
+            
+            if (box.health <= 0) {
+                box.y += 1000;
+                box.x += 1000;
+            }
+
+            if (bullet.pierceCount <= 0) {
+                bulletFired = false;
+                bullet.x = player.x + player.w / 2;
+                bullet.y = player.y;
+                return;
+            }
         }
     }
 }
@@ -146,9 +156,14 @@ function drawBullet(){
     ctx.drawImage(bulletImage, bullet.x, bullet.y, bullet.w, bullet.h)
 }
 
-function shoot(){
-    bullet.x = player.x + player.w / 2
-    bullet.y = player.y
+function shoot() {
+    bullet.x = player.x + player.w / 2;
+    bullet.y = player.y;
+    bullet.pierceCount = bullet.pierceLvl;
+
+    obstacles.forEach(box => {
+        box.hit = false;
+    });
 }
 
 function keyDown(e){
@@ -181,7 +196,7 @@ function bulletSizeUp() {
 }
 
 function bulletPierceUp() {
-    bullet.pierce += 1
+    bullet.pierceLvl += 1
 }
 
 function dropPowerup(x, y) {
