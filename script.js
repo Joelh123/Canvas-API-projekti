@@ -16,7 +16,7 @@ const player = {
     x: 400,
     y: 560,
     speed: 5,
-    dx: 0,
+    dx: 0
 }
 
 const bullet = {
@@ -185,7 +185,7 @@ function bulletPierceUp() {
 }
 
 function dropPowerup(x, y) {
-    randomNumber = Math.floor(Math.random() * 3)
+    let randomNumber = Math.floor(Math.random() * 3)
 
     if (randomNumber == 0) {
         powerups.push({
