@@ -2,8 +2,13 @@ const canvas = document.getElementById('canvas');
 const ctx = canvas.getContext('2d');
 const image = document.getElementById('playerImage');
 const bulletImage = document.getElementById('bulletImage');
+const bulletPierceImage = document.getElementById("bulletPierceImage")
+const bulletSizeImage = document.getElementById("bulletSizeImage")
+const bulletSpeedImage = document.getElementById("bulletSpeedImage")
+
 let bulletFired = false;
 let paused = false;
+const powerups = []
 
 const player = {
     w: 50,
@@ -17,8 +22,7 @@ const player = {
 const bullet = {
     w: 15,
     h: 25,
-    speed: 5,
-    dy: 10,
+    speed: 10,
     pierce: 0
 }
 
@@ -127,13 +131,15 @@ function update(){
         drawBullet();
         bulletNewPos();
     }
+    drawPowerups();
+    pickUpPowerups();
     drawObstacles();
     detectObstacles();
     requestAnimationFrame(update);
 }
 
 function bulletNewPos(){
-    bullet.y -= bullet.dy
+    bullet.y -= bullet.speed
 }
 
 function drawBullet(){
@@ -167,15 +173,80 @@ function keyDown(e){
 }
 
 function bulletSpeedUp() {
-    bullet.speed += 1
+    bullet.speed += 100
 }
 
-function bulletWidth() {
+function bulletSizeUp() {
     bullet.w += 2
 }
 
 function bulletPierceUp() {
     bullet.pierce += 1
+}
+
+function dropPowerup(x, y) {
+    randomNumber = Math.floor(Math.random() * 3)
+
+    if (randomNumber == 0) {
+        powerups.push({
+            image: bulletPierceImage,
+            w: 50,
+            h: 50,
+            x: x,
+            y: y,
+            ability: bulletPierceUp
+        })
+    }
+
+    if (randomNumber == 1) {
+        powerups.push({
+            image: bulletSizeImage,
+            w: 50,
+            h: 50,
+            x: x,
+            y: y,
+            ability: bulletSizeUp
+        })
+    }
+
+    if (randomNumber == 2) {
+        powerups.push({
+            image: bulletSpeedImage,
+            w: 50,
+            h: 50,
+            x: x,
+            y: y,
+            ability: bulletSpeedUp
+        })
+    }
+}
+
+dropPowerup(10, 10)
+dropPowerup(70, 10)
+dropPowerup(130, 10)
+dropPowerup(600, 10)
+
+function drawPowerups() {
+    for (const powerup of powerups) {
+        ctx.drawImage(powerup.image, powerup.x, powerup.y, 50, 50)
+        powerupNewPos(powerup)
+    }
+}
+
+function powerupNewPos(powerup) {
+    powerup.y += 2
+    if (powerup.y + powerup.h >= 650) {
+        powerups.splice(powerups.indexOf(powerup), 1)
+    }
+}
+
+function pickUpPowerups() {
+    for (const powerup of powerups) {
+        if (player.x + player.w > powerup.x && player.x < powerup.x + powerup.w && player.y + player.h > powerup.y && player.y < powerup.y + powerup.h) {
+            powerup.ability()
+            powerups.splice(powerups.indexOf(powerup), 1)
+        }
+    }
 }
 
 function moveLeft(){
