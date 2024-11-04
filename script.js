@@ -188,7 +188,7 @@ function keyDown(e){
 }
 
 function bulletSpeedUp() {
-    bullet.speed += 100
+    bullet.speed += 2
 }
 
 function bulletSizeUp() {
