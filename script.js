@@ -178,7 +178,7 @@ function drawBullet(){
 }
 
 function shoot() {
-    bullet.x = player.x + player.w / 2;
+    bullet.x = (player.x + player.w / 2) - bullet.w / 2;
     bullet.y = player.y;
     bullet.pierceCount = bullet.pierceLvl;
 
@@ -210,6 +210,7 @@ function bulletSpeedUp() {
 
 function bulletSizeUp() {
     bullet.w += 2
+    bullet.h += 1
 }
 
 function bulletPierceUp() {
@@ -253,16 +254,10 @@ function dropPowerup(x, y) {
     }
 }
 
-dropPowerup(10, 10)
-dropPowerup(70, 10)
-
 function drawPauseScreen() {
     ctx.font = "48px Arial";
     ctx.fillText("Paused", 323, 200);
 }
-
-dropPowerup(130, 10)
-dropPowerup(600, 10)
 
 function drawPowerups() {
     for (const powerup of powerups) {
@@ -354,7 +349,7 @@ function updateEnemies() {
 
         if (enemy.y + enemy.h >= canvas.height) {
             gameOver = true;
-            alert("HÃ¤visit vittu"); 
+            alert("Hävisit vittu"); 
             return; 
         }
     }
@@ -373,11 +368,17 @@ function allEnemiesDefeated() {
 }
 
 function detectEnemies() {
-    if (!bulletFired) return;
 
     for (const enemy of enemies) {
-        if (enemy.health <= 0) continue;
+        if (enemy.health <= 0) {
+            let randomNumber = Math.floor(Math.random() * 30)
 
+            if (randomNumber == 1) {
+                dropPowerup(enemy.x, enemy.y)
+            }
+            enemies.splice(enemies.indexOf(enemy), 1)
+            continue;
+        }
         if (
             bullet.y < enemy.y + enemy.h &&
             bullet.y + bullet.h > enemy.y &&
