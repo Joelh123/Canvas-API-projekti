@@ -19,7 +19,7 @@ body {
     border-radius: 5px;
 }
 
-#playerImage, #bulletImage, #bulletPierceImage, #bulletSpeedImage, #bulletSizeImage {
+#playerImage, #bulletImage, #bulletPierceImage, #bulletSpeedImage, #bulletSizeImage, #enemyImage {
     display: none;
 }
 
