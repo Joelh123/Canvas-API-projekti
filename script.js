@@ -135,16 +135,20 @@ function detectObstacles() {
 
 function update(){
     clear();
-    drawPlayer();
-    newPos();
-    if (bulletFired) {
-        drawBullet();
-        bulletNewPos();
+    if (!paused) {
+        drawPlayer();
+        newPos();
+        if (bulletFired) {
+            drawBullet();
+            bulletNewPos();
+        }
+        drawPowerups();
+        pickUpPowerups();
+        drawObstacles();
+        detectObstacles();
+    } else {
+        drawPauseScreen()
     }
-    drawPowerups();
-    pickUpPowerups();
-    drawObstacles();
-    detectObstacles();
     requestAnimationFrame(update);
 }
 
@@ -169,10 +173,6 @@ function shoot() {
 function keyDown(e){
     if (e.key === 'Escape'){
     paused = !paused;
-    }
-    console.log(e.key);
-    if (paused){
-        return
     }
     if (e.key === 'ArrowRight' || e.key === 'Right') {
         moveRight();
@@ -238,6 +238,12 @@ function dropPowerup(x, y) {
 
 dropPowerup(10, 10)
 dropPowerup(70, 10)
+
+function drawPauseScreen() {
+    ctx.font = "48px Arial";
+    ctx.fillText("Paused", 323, 200);
+}
+
 dropPowerup(130, 10)
 dropPowerup(600, 10)
 
