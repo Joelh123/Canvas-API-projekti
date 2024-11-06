@@ -253,9 +253,58 @@ function dropPowerup(x, y) {
     }
 }
 
+function getMousePos(canvas, event) {
+    let rect = canvas.getBoundingClientRect();
+    return {
+      x: event.clientX - rect.left,
+      y: event.clientY - rect.top,
+    };
+  }
+  
+function isInside(pos, rect) {
+    return pos.x > rect.x && pos.x < rect.x + rect.width && pos.y < rect.y + rect.height && pos.y > rect.y
+}
+  
+let continuebutton = {
+    x: 5,
+    y: 250,
+    width: 200,
+    height: 100,
+};
+
+let exitbutton = {
+    x: 5,
+    y: 365,
+    width: 200,
+    height: 100,
+};
+
+canvas.addEventListener('click', function(evt) {
+    let mousePos = getMousePos(canvas, evt);
+  
+    if (isInside(mousePos, continuebutton)) {
+        paused = false;
+    } else if (isInside(mousePos, exitbutton)) {
+        window.location.pathname = `/index.html`
+    } else {
+        return
+    }
+}, false);
+  
+function continueButton(continuebutton) {
+    ctx.fillText('Jatka', continuebutton.x, continuebutton.y + 64);
+}
+
+function exitButton(exitbutton) {
+    ctx.fillText('Poistu', exitbutton.x, exitbutton.y + 64);
+}
+
+
 function drawPauseScreen() {
     ctx.font = "48px Arial";
-    ctx.fillText("Paused", 323, 200);
+    ctx.fillText("Paused", 5, 200);
+    continueButton(continuebutton);
+    exitButton(exitbutton);
 }
 
 function drawPowerups() {
