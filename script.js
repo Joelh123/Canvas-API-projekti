@@ -8,7 +8,6 @@ const bulletSpeedImage = document.getElementById("bulletSpeedImage")
 
 let gameOver = false;
 
-
 let bulletFired = false;
 let paused = false;
 const powerups = []
@@ -26,7 +25,7 @@ const bullet = {
     w: 15,
     h: 25,
     speed: 10,
-    pierceLvl: 1
+    pierceLvl: 10
 }
 const enemies = [];
 let enemySpeed = 2; 
@@ -95,46 +94,48 @@ function newPos(){
 function detectWalls(){
     if (player.x < 0) {
         player.x = 0;
-    }
-
-    if (player.x + player.w > canvas.width) {
+    }   if (player.x + player.w > canvas.width) {
         player.x = canvas.width - player.w;
-    }
-
-    if (bullet.y < 0) {
+    }   if (bullet.y < 0) {
         bulletFired = false;
     }
 }
 
 function drawObstacles() {
-    ctx.fillStyle = "white";
-    
     for (const box of obstacles) {
         if (box.health <= 0) {
             obstacles.splice(obstacles.indexOf(box), 1)
             continue;
-        }
+        }   if (box.flashTime > 0) {
+            ctx.fillStyle = "Red";
+            box.flashTime -= 1;
+        }   else {
+            ctx.fillStyle = "White";
+        }   
         ctx.fillRect(box.x, box.y, box.w, box.h)
     }
 }
 
 function detectObstacles() {
     for (const box of obstacles) {
-        if (bullet.y < box.y + box.h && bullet.x + bullet.w > box.x && bullet.x < box.x + box.w && !box.hit) {
-            box.hit = true;
-            box.health -= 1;
-            bullet.pierceCount -= 1;
-            
-            if (box.health <= 0) {
-                box.y += 1000;
-                box.x += 1000;
-            }
+        if (bullet.y < box.y + box.h && 
+            bullet.x + bullet.w > box.x && 
+            bullet.x < box.x + box.w && 
+            !box.hit) 
+            {   box.hit = true;
+                box.health -= 1;
+                bullet.pierceCount -= 1;
+                box.flashTime = 10;
+                if (box.health <= 0) {
+                    box.y += 1000;
+                    box.x += 1000;
+                }
 
-            if (bullet.pierceCount <= 0) {
-                bulletFired = false;
-                bullet.x = player.x + player.w / 2;
-                bullet.y = player.y;
-                return;
+                if (bullet.pierceCount <= 0) {
+                    bulletFired = false;
+                    bullet.x = player.x + player.w / 2;
+                    bullet.y = player.y;
+                    return;
             }
         }
     }
@@ -150,8 +151,7 @@ function update(){
         if (bulletFired) {
             drawBullet();
             bulletNewPos();
-        }
-        drawPowerups();
+        } drawPowerups();
         pickUpPowerups();
         drawObstacles();
         detectObstacles();
@@ -160,13 +160,12 @@ function update(){
         drawEnemies();
         detectEnemies();
 
-    if (allEnemiesDefeated()) {
-        respawnEnemies();
-    }
+        if (allEnemiesDefeated()) {
+            respawnEnemies();
+        }
     } else {
         drawPauseScreen()
-    }
-    requestAnimationFrame(update);
+    } requestAnimationFrame(update);
 }
 
 function bulletNewPos(){
