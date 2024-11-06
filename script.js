@@ -346,7 +346,7 @@ function updateEnemies() {
             shouldReverse = true;
         }
 
-        if (enemy.y + enemy.h >= canvas.height) {
+        if (enemy.y + enemy.h >= player.y) {
             gameOver = true;
             alert("Hävisit vittu"); 
             return; 
