@@ -25,7 +25,7 @@ const bullet = {
     w: 15,
     h: 25,
     speed: 10,
-    pierceLvl: 10
+    pierceLvl: 1
 }
 const enemies = [];
 let enemySpeed = 2; 
@@ -196,7 +196,6 @@ function keyDown(e){
         moveLeft();   
     } else if (e.key === ' ' || e.key === 'ArrowUp' || e.key === 'Up') {
         if (! bulletFired){
-            //console.log("Toimii!")
             shoot()
             bulletFired = true;
         }
