@@ -1,3 +1,17 @@
+import { 
+    enemies, 
+    enemySpeed, 
+    enemyDirection, 
+    enemyRows, 
+    enemyCols, 
+    createEnemies, 
+    respawnEnemies, 
+    drawEnemies, 
+    updateEnemies, 
+    allEnemiesDefeated, 
+    detectEnemies 
+} from './enemies.js';
+
 const canvas = document.getElementById('canvas');
 const ctx = canvas.getContext('2d');
 const image = document.getElementById('playerImage');
@@ -27,11 +41,6 @@ const bullet = {
     speed: 10,
     pierceLvl: 1
 }
-const enemies = [];
-let enemySpeed = 2; 
-let enemyDirection = 1; 
-const enemyRows = 3; 
-const enemyCols = 6; 
 
 const obstacles = [
     {
@@ -141,31 +150,41 @@ function detectObstacles() {
     }
 }
 
-function update(){
-    if (gameOver) return; 
+function gameOverCallback() {
+    gameOver = true;
+    alert("Game Over");
+}
+
+function update() {
+    if (gameOver) return;
 
     clear();
     if (!paused) {
         drawPlayer();
         newPos();
+        
         if (bulletFired) {
             drawBullet();
             bulletNewPos();
-        } drawPowerups();
+        }
+
+        drawPowerups();
         pickUpPowerups();
         drawObstacles();
         detectObstacles();
 
-        updateEnemies();
-        drawEnemies();
-        detectEnemies();
+        updateEnemies(canvas, player, gameOverCallback); // Pass canvas, player, and gameOverCallback
+        drawEnemies(ctx, enemyImage); // Pass ctx and enemyImage
+        detectEnemies(bullet, dropPowerup, resetBullet); // Pass bullet, dropPowerup, and resetBullet
 
         if (allEnemiesDefeated()) {
             respawnEnemies();
         }
     } else {
-        drawPauseScreen()
-    } requestAnimationFrame(update);
+        drawPauseScreen();
+    }
+
+    requestAnimationFrame(update);
 }
 
 function bulletNewPos(){
@@ -348,101 +367,8 @@ function keyUp(e){
 
     }
 }
-function createEnemies(rows, cols) {
-    enemies.length = 0; 
-    for (let row = 0; row < rows; row++) {
-        for (let col = 0; col < cols; col++) {
-            enemies.push({
-                w: 50, 
-                h: 50, 
-                x: 80 + col * 60,
-                y: 50 + row * 50,
-                health: 1,
-            });
-        }
-    }
-}
-
-
-
-function respawnEnemies() {
-    createEnemies(enemyRows, enemyCols); 
-    enemySpeed += 0.5; 
-    enemyDirection = 1; 
-}
 
 createEnemies(enemyRows, enemyCols);
-
-const enemyImage = document.getElementById('enemyImage');
-
-function drawEnemies() {
-    for (const enemy of enemies) {
-        if (enemy.health > 0) {
-            ctx.drawImage(enemyImage, enemy.x, enemy.y, enemy.w, enemy.h);
-        }
-    }
-}
-
-
-function updateEnemies() {
-    let shouldReverse = false;
-
-    for (const enemy of enemies) {
-        enemy.x += enemySpeed * enemyDirection;
-
-        if (enemy.x <= 0 || enemy.x + enemy.w >= canvas.width) {
-            shouldReverse = true;
-        }
-
-        if (enemy.y + enemy.h >= player.y) {
-            gameOver = true;
-            alert("Hävisit vittu"); 
-            return; 
-        }
-    }
-
-    if (shouldReverse) {
-        enemyDirection *= -1; 
-        for (const enemy of enemies) {
-            enemy.y += 20; 
-        }
-    }
-}
-
-
-function allEnemiesDefeated() {
-    return enemies.every(enemy => enemy.health <= 0);
-}
-
-function detectEnemies() {
-
-    for (const enemy of enemies) {
-        if (enemy.health <= 0) {
-            let randomNumber = Math.floor(Math.random() * 30)
-
-            if (randomNumber == 1) {
-                dropPowerup(enemy.x, enemy.y)
-            }
-            enemies.splice(enemies.indexOf(enemy), 1)
-            continue;
-        }
-        if (
-            bullet.y < enemy.y + enemy.h &&
-            bullet.y + bullet.h > enemy.y &&
-            bullet.x + bullet.w > enemy.x &&
-            bullet.x < enemy.x + enemy.w
-        ) {
-            enemy.health -= 1;
-            bullet.pierceCount -= 1;
-
-            if (bullet.pierceCount <= 0) {
-                resetBullet();
-                break;
-            }
-        }
-    }
-}
-
 
 function resetBullet(){
     bulletFired = false;
@@ -452,7 +378,7 @@ function resetBullet(){
 }
 
 
-update(); 
-
 document.addEventListener('keydown', keyDown);
-document.addEventListener('keyup', keyUp);  
+document.addEventListener('keyup', keyUp);
+createEnemies(enemyRows, enemyCols);
+update();
