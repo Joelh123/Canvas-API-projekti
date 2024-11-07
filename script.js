@@ -173,9 +173,9 @@ function update() {
         drawObstacles();
         detectObstacles();
 
-        updateEnemies(canvas, player, gameOverCallback); // Pass canvas, player, and gameOverCallback
-        drawEnemies(ctx, enemyImage); // Pass ctx and enemyImage
-        detectEnemies(bullet, dropPowerup, resetBullet); // Pass bullet, dropPowerup, and resetBullet
+        updateEnemies(canvas, player, gameOverCallback);
+        drawEnemies(ctx, enemyImage);
+        detectEnemies(bullet, dropPowerup, resetBullet); 
 
         if (allEnemiesDefeated()) {
             respawnEnemies();
