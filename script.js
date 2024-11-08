@@ -25,7 +25,7 @@ const bullet = {
     w: 15,
     h: 25,
     speed: 10,
-    pierceLvl: 10
+    pierceLvl: 1
 }
 const enemies = [];
 let enemySpeed = 2; 
@@ -129,9 +129,7 @@ function detectObstacles() {
                 if (box.health <= 0) {
                     box.y += 1000;
                     box.x += 1000;
-                }
-
-                if (bullet.pierceCount <= 0) {
+                }   if (bullet.pierceCount <= 0) {
                     bulletFired = false;
                     bullet.x = player.x + player.w / 2;
                     bullet.y = player.y;
