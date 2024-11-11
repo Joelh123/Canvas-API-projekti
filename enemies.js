@@ -61,17 +61,21 @@ export function allEnemiesDefeated() {
     return enemies.every(enemy => enemy.health <= 0);
 }
 
-export function detectEnemies(bullet, dropPowerup, resetBullet) {
-    for (const enemy of enemies) {
-        if (enemy.health <= 0) {
-            let randomNumber = Math.floor(Math.random() * 30)
+export function detectEnemies(bullet, dropPowerup, resetBullet, scoreCallback) {
+    for (let i = enemies.length - 1; i >= 0; i--) {
+        const enemy = enemies[i];
 
-            if (randomNumber == 1) {
+        if (enemy.health <= 0) {
+            if (Math.floor(Math.random() * 30) === 1) {
                 dropPowerup(enemy.x, enemy.y);
             }
-            enemies.splice(enemies.indexOf(enemy), 1);
+
+            scoreCallback();
+
+            enemies.splice(i, 1);
             continue;
         }
+
         if (
             bullet.y < enemy.y + enemy.h &&
             bullet.y + bullet.h > enemy.y &&

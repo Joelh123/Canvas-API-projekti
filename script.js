@@ -21,7 +21,7 @@ const bulletSizeImage = document.getElementById("bulletSizeImage")
 const bulletSpeedImage = document.getElementById("bulletSpeedImage")
 
 let gameOver = false;
-
+let score = 0;
 let bulletFired = false;
 let paused = false;
 const powerups = []
@@ -173,16 +173,28 @@ function update() {
 
         updateEnemies(canvas, player, gameOverCallback);
         drawEnemies(ctx, enemyImage);
-        detectEnemies(bullet, dropPowerup, resetBullet); 
+
+        detectEnemies(bullet, dropPowerup, resetBullet, increaseScore);
 
         if (allEnemiesDefeated()) {
             respawnEnemies();
         }
+
+        drawScore(); 
     } else {
         drawPauseScreen();
     }
 
     requestAnimationFrame(update);
+}
+
+function drawScore() {
+    ctx.font = "24px Arial";
+    ctx.fillStyle = "white";
+    ctx.fillText("Score: " + score, 10, 30);
+}
+function increaseScore() {
+    score += 10;
 }
 
 function bulletNewPos(){
