@@ -17,6 +17,7 @@ let enemySpeed = 2;
 let enemyDirection = 1; 
 const enemyRows = 3; 
 const enemyCols = 6; 
+const enemyBullets = []
 
 const player = {
     w: 50,
@@ -156,6 +157,10 @@ function detectEnemies() {
             continue;
         }
 
+        if (Math.floor(Math.random() * 2500) === 1) {
+            enemyFireBullet(enemy.x + enemy.w / 2, enemy.y + enemy.h)
+        }
+
         if (
             bullet.y < enemy.y + enemy.h &&
             bullet.y + bullet.h > enemy.y &&
@@ -169,6 +174,36 @@ function detectEnemies() {
                 resetBullet();
                 break;
             }
+        }
+    }
+}
+
+function enemyFireBullet(x, y) {
+    enemyBullets.push({
+        image: bulletImage,
+        x: x,
+        y: y,
+        w: 15,
+        h: 25
+    })
+}
+
+function drawEnemyBullet() {
+    for (const enemyBullet of enemyBullets) {
+        ctx.drawImage(enemyBullet.image, enemyBullet.x, enemyBullet.y, enemyBullet.w, enemyBullet.h)
+    }
+}
+
+function enemyBulletNewPos() {
+    for (const enemyBullet of enemyBullets) {
+        enemyBullet.y += 1
+    }
+}
+
+function detectEnemyBullet() {
+    for (const enemyBullet of enemyBullets) {
+        if (player.x + player.w > enemyBullet.x && player.x < enemyBullet.x + enemyBullet.w && player.y + player.h > enemyBullet.y && player.y < enemyBullet.y + enemyBullet.h) {
+            gameOverCallback()
         }
     }
 }
@@ -247,6 +282,10 @@ function update() {
             drawBullet();
             bulletNewPos();
         }
+
+        drawEnemyBullet()
+        enemyBulletNewPos()
+        detectEnemyBullet()
 
         drawPowerups();
         pickUpPowerups();
