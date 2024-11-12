@@ -1,17 +1,3 @@
-import { 
-    enemies, 
-    enemySpeed, 
-    enemyDirection, 
-    enemyRows, 
-    enemyCols, 
-    createEnemies, 
-    respawnEnemies, 
-    drawEnemies, 
-    updateEnemies, 
-    allEnemiesDefeated, 
-    detectEnemies 
-} from './enemies.js';
-
 const canvas = document.getElementById('canvas');
 const ctx = canvas.getContext('2d');
 const image = document.getElementById('playerImage');
@@ -25,6 +11,12 @@ let score = 0;
 let bulletFired = false;
 let paused = false;
 const powerups = []
+
+let enemies = [];
+let enemySpeed = 2; 
+let enemyDirection = 1; 
+const enemyRows = 3; 
+const enemyCols = 6; 
 
 const player = {
     w: 50,
@@ -89,6 +81,96 @@ const obstacles = [
 
 function drawPlayer(){
     ctx.drawImage(image, player.x, player.y, player.w, player.h)
+}
+
+function createEnemies(rows, cols) {
+    enemies.length = 0; 
+    for (let row = 0; row < rows; row++) {
+        for (let col = 0; col < cols; col++) {
+            enemies.push({
+                w: 50, 
+                h: 50, 
+                x: 80 + col * 60,
+                y: 50 + row * 50,
+                health: 1,
+            });
+        }
+    }
+}
+
+
+function respawnEnemies() {
+    createEnemies(enemyRows, enemyCols); 
+    enemySpeed += 0.5; 
+    enemyDirection = 1; 
+}
+
+function drawEnemies(enemyImage) {
+    for (const enemy of enemies) {
+        if (enemy.health > 0) {
+            ctx.drawImage(enemyImage, enemy.x, enemy.y, enemy.w, enemy.h);
+        }
+    }
+}
+
+function updateEnemies() {
+    let shouldReverse = false;
+
+    for (const enemy of enemies) {
+        enemy.x += enemySpeed * enemyDirection;
+
+        if (enemy.x <= 0 || enemy.x + enemy.w >= canvas.width) {
+            shouldReverse = true;
+        }
+
+        if (enemy.y + enemy.h >= player.y) {
+            gameOverCallback(); 
+            return; 
+        }
+    }
+
+    if (shouldReverse) {
+        enemyDirection *= -1; 
+        for (const enemy of enemies) {
+            enemy.y += 20; 
+        }
+    }
+}
+
+function allEnemiesDefeated() {
+    return enemies.every(enemy => enemy.health <= 0);
+}
+
+function detectEnemies() {
+    for (let i = enemies.length - 1; i >= 0; i--) {
+        const enemy = enemies[i];
+
+        if (enemy.health <= 0) {
+            if (Math.floor(Math.random() * 30) === 1) {
+                dropPowerup(enemy.x, enemy.y);
+            }
+
+            increaseScore();
+
+            enemies.splice(i, 1);
+            continue;
+        }
+
+        if (
+            bullet.y < enemy.y + enemy.h &&
+            bullet.y + bullet.h > enemy.y &&
+            bullet.x + bullet.w > enemy.x &&
+            bullet.x < enemy.x + enemy.w
+        ) {
+            enemy.health -= 1;
+            bullet.pierceCount -= 1;
+
+            if (bullet.pierceCount <= 0) {
+                resetBullet();
+                break;
+            }
+        }
+    }
 }
 
 function clear(){
@@ -171,10 +253,10 @@ function update() {
         drawObstacles();
         detectObstacles();
 
-        updateEnemies(canvas, player, gameOverCallback);
-        drawEnemies(ctx, enemyImage);
+        updateEnemies(player, gameOverCallback);
+        drawEnemies(enemyImage);
 
-        detectEnemies(bullet, dropPowerup, resetBullet, increaseScore);
+        detectEnemies();
 
         if (allEnemiesDefeated()) {
             respawnEnemies();
