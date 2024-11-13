@@ -196,7 +196,7 @@ function drawEnemyBullet() {
 
 function enemyBulletNewPos() {
     for (const enemyBullet of enemyBullets) {
-        enemyBullet.y += 10
+        enemyBullet.y += 2
     }
 }
 
