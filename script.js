@@ -204,8 +204,11 @@ function enemyBulletNewPos() {
 
 function detectEnemyBullet() {
     for (const enemyBullet of enemyBullets) {
-        if (player.x + player.w > enemyBullet.x && player.x < enemyBullet.x + enemyBullet.w && player.y + player.h > enemyBullet.y && player.y < enemyBullet.y + enemyBullet.h) {
-            gameOverCallback()
+        if (player.x + player.w > enemyBullet.x 
+            && player.x < enemyBullet.x + enemyBullet.w 
+            && player.y + player.h > enemyBullet.y 
+            && player.y < enemyBullet.y + enemyBullet.h) 
+            {   gameOverCallback()
         }
     }
 }
@@ -246,10 +249,10 @@ function drawObstacles() {
 
 function detectObstacles() {
     for (const box of obstacles) {
-        if (bullet.y < box.y + box.h && 
-            bullet.x + bullet.w > box.x && 
-            bullet.x < box.x + box.w && 
-            !box.hit) 
+        if (bullet.y < box.y + box.h 
+            && bullet.x + bullet.w > box.x 
+            && bullet.x < box.x + box.w 
+            && !box.hit) 
             {   box.hit = true;
                 box.health -= 1;
                 bullet.pierceCount -= 1;
@@ -262,6 +265,26 @@ function detectObstacles() {
                     bullet.x = player.x + player.w / 2;
                     bullet.y = player.y;
                     return;
+            }
+        }
+        for (const enemyBullet of enemyBullets) {
+            if (box.x + box.w > enemyBullet.x 
+                && box.x < enemyBullet.x + enemyBullet.w 
+                && box.y + box.h > enemyBullet.y 
+                && box.y < enemyBullet.y + enemyBullet.h) 
+                {   enemyBullets.splice(enemyBullets.indexOf(enemyBullet), 1)
+                    box.health -= 1;
+                    bullet.pierceCount -= 1;
+                    box.flashTime = 10;
+                    if (box.health <= 0) {
+                        box.y += 1000;
+                        box.x += 1000;
+                    }   if (bullet.pierceCount <= 0) {
+                        bulletFired = false;
+                        bullet.x = player.x + player.w / 2;
+                        bullet.y = player.y;
+                        return;
+                 }
             }
         }
     }
@@ -341,6 +364,8 @@ function shoot() {
 }
 
 function keyDown(e){
+    if (gameOver) return;
+
     if (e.key === 'Escape'){
         paused = !paused;
         if (paused) {
