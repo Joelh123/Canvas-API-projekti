@@ -17,6 +17,7 @@ let enemySpeed = 2;
 let enemyDirection = 1; 
 const enemyRows = 3; 
 const enemyCols = 6; 
+const enemyBullets = []
 
 const player = {
     w: 50,
@@ -156,6 +157,10 @@ function detectEnemies() {
             continue;
         }
 
+        if (Math.floor(Math.random() * 2500) === 1) {
+            enemyFireBullet(enemy.x + enemy.w / 2, enemy.y + enemy.h)
+        }
+
         if (
             bullet.y < enemy.y + enemy.h &&
             bullet.y + bullet.h > enemy.y &&
@@ -169,6 +174,36 @@ function detectEnemies() {
                 resetBullet();
                 break;
             }
+        }
+    }
+}
+
+function enemyFireBullet(x, y) {
+    enemyBullets.push({
+        image: bulletImage,
+        x: x,
+        y: y,
+        w: 15,
+        h: 25
+    })
+}
+
+function drawEnemyBullet() {
+    for (const enemyBullet of enemyBullets) {
+        ctx.drawImage(enemyBullet.image, enemyBullet.x, enemyBullet.y, enemyBullet.w, enemyBullet.h)
+    }
+}
+
+function enemyBulletNewPos() {
+    for (const enemyBullet of enemyBullets) {
+        enemyBullet.y += 2
+    }
+}
+
+function detectEnemyBullet() {
+    for (const enemyBullet of enemyBullets) {
+        if (player.x + player.w > enemyBullet.x && player.x < enemyBullet.x + enemyBullet.w && player.y + player.h > enemyBullet.y && player.y < enemyBullet.y + enemyBullet.h) {
+            gameOverCallback()
         }
     }
 }
@@ -231,40 +266,46 @@ function detectObstacles() {
 }
 
 function gameOverCallback() {
+    displayedButtons = [restartbutton, exitbutton]
     gameOver = true;
-    alert("Game Over");
 }
 
 function update() {
-    if (gameOver) return;
-
     clear();
-    if (!paused) {
-        drawPlayer();
-        newPos();
-        
-        if (bulletFired) {
-            drawBullet();
-            bulletNewPos();
+    if (!gameOver) {
+        if (!paused) {
+            drawPlayer();
+            newPos();
+            
+            if (bulletFired) {
+                drawBullet();
+                bulletNewPos();
+            }
+
+            drawEnemyBullet()
+            enemyBulletNewPos()
+            detectEnemyBullet()
+
+            drawPowerups();
+            pickUpPowerups();
+            drawObstacles();
+            detectObstacles();
+
+            updateEnemies(player, gameOverCallback);
+            drawEnemies(enemyImage);
+
+            detectEnemies();
+
+            if (allEnemiesDefeated()) {
+                respawnEnemies();
+            }
+
+            drawScore(); 
+        } else {
+            drawPauseScreen();
         }
-
-        drawPowerups();
-        pickUpPowerups();
-        drawObstacles();
-        detectObstacles();
-
-        updateEnemies(player, gameOverCallback);
-        drawEnemies(enemyImage);
-
-        detectEnemies();
-
-        if (allEnemiesDefeated()) {
-            respawnEnemies();
-        }
-
-        drawScore(); 
     } else {
-        drawPauseScreen();
+        drawEndScreen();
     }
 
     requestAnimationFrame(update);
@@ -299,7 +340,12 @@ function shoot() {
 
 function keyDown(e){
     if (e.key === 'Escape'){
-    paused = !paused;
+        paused = !paused;
+        if (paused) {
+            displayedButtons = [continuebutton, exitbutton]
+        } else {
+            displayedButtons = []
+        }
     }
     if (e.key === 'ArrowRight' || e.key === 'Right') {
         moveRight();
@@ -374,47 +420,75 @@ function getMousePos(canvas, event) {
 function isInside(pos, rect) {
     return pos.x > rect.x && pos.x < rect.x + rect.width && pos.y < rect.y + rect.height && pos.y > rect.y
 }
-  
+
+let displayedButtons = []
+
 let continuebutton = {
+    text: "Jatka",
     x: 5,
     y: 250,
     width: 200,
     height: 100,
+    action: continueGame
 };
 
 let exitbutton = {
+    text: "Poistu",
     x: 5,
     y: 365,
     width: 200,
     height: 100,
+    action: exitGame
 };
+
+let restartbutton = {
+    text: "Aloita alusta",
+    x: 5,
+    y: 250,
+    width: 300,
+    height: 100,
+    action: restartGame
+}
+
+function continueGame() {
+    paused = false
+}
+
+function exitGame() {
+    window.location.pathname = `/index.html`
+}
+
+function restartGame() {
+    location.reload()
+}
 
 canvas.addEventListener('click', function(evt) {
     let mousePos = getMousePos(canvas, evt);
   
-    if (isInside(mousePos, continuebutton)) {
-        paused = false;
-    } else if (isInside(mousePos, exitbutton)) {
-        window.location.pathname = `/index.html`
-    } else {
-        return
+    for (const currentButton of displayedButtons) {
+        if (isInside(mousePos, currentButton)) {
+            currentButton.action()
+        }
     }
+
 }, false);
   
-function continueButton(continuebutton) {
-    ctx.fillText('Jatka', continuebutton.x, continuebutton.y + 64);
+function createButtons() {
+    for (const currentButton of displayedButtons) {
+        ctx.fillText(currentButton.text, currentButton.x, currentButton.y + 64);
+    }
 }
-
-function exitButton(exitbutton) {
-    ctx.fillText('Poistu', exitbutton.x, exitbutton.y + 64);
-}
-
 
 function drawPauseScreen() {
     ctx.font = "48px Arial";
-    ctx.fillText("Paused", 5, 200);
-    continueButton(continuebutton);
-    exitButton(exitbutton);
+    ctx.fillText("Tauko", 5, 200);
+    createButtons()
+}
+
+function drawEndScreen() {
+    ctx.font = "48px Arial";
+    ctx.fillText("Häivisit pelin", 5, 200);
+    createButtons()
 }
 
 function drawPowerups() {
