@@ -196,7 +196,7 @@ function drawEnemyBullet() {
 
 function enemyBulletNewPos() {
     for (const enemyBullet of enemyBullets) {
-        enemyBullet.y += 1
+        enemyBullet.y += 10
     }
 }
 
@@ -266,44 +266,46 @@ function detectObstacles() {
 }
 
 function gameOverCallback() {
+    displayedButtons = [restartbutton, exitbutton]
     gameOver = true;
-    alert("Game Over");
 }
 
 function update() {
-    if (gameOver) return;
-
     clear();
-    if (!paused) {
-        drawPlayer();
-        newPos();
-        
-        if (bulletFired) {
-            drawBullet();
-            bulletNewPos();
+    if (!gameOver) {
+        if (!paused) {
+            drawPlayer();
+            newPos();
+            
+            if (bulletFired) {
+                drawBullet();
+                bulletNewPos();
+            }
+
+            drawEnemyBullet()
+            enemyBulletNewPos()
+            detectEnemyBullet()
+
+            drawPowerups();
+            pickUpPowerups();
+            drawObstacles();
+            detectObstacles();
+
+            updateEnemies(player, gameOverCallback);
+            drawEnemies(enemyImage);
+
+            detectEnemies();
+
+            if (allEnemiesDefeated()) {
+                respawnEnemies();
+            }
+
+            drawScore(); 
+        } else {
+            drawPauseScreen();
         }
-
-        drawEnemyBullet()
-        enemyBulletNewPos()
-        detectEnemyBullet()
-
-        drawPowerups();
-        pickUpPowerups();
-        drawObstacles();
-        detectObstacles();
-
-        updateEnemies(player, gameOverCallback);
-        drawEnemies(enemyImage);
-
-        detectEnemies();
-
-        if (allEnemiesDefeated()) {
-            respawnEnemies();
-        }
-
-        drawScore(); 
     } else {
-        drawPauseScreen();
+        drawEndScreen();
     }
 
     requestAnimationFrame(update);
@@ -338,7 +340,12 @@ function shoot() {
 
 function keyDown(e){
     if (e.key === 'Escape'){
-    paused = !paused;
+        paused = !paused;
+        if (paused) {
+            displayedButtons = [continuebutton, exitbutton]
+        } else {
+            displayedButtons = []
+        }
     }
     if (e.key === 'ArrowRight' || e.key === 'Right') {
         moveRight();
@@ -413,47 +420,75 @@ function getMousePos(canvas, event) {
 function isInside(pos, rect) {
     return pos.x > rect.x && pos.x < rect.x + rect.width && pos.y < rect.y + rect.height && pos.y > rect.y
 }
-  
+
+let displayedButtons = []
+
 let continuebutton = {
+    text: "Jatka",
     x: 5,
     y: 250,
     width: 200,
     height: 100,
+    action: continueGame
 };
 
 let exitbutton = {
+    text: "Poistu",
     x: 5,
     y: 365,
     width: 200,
     height: 100,
+    action: exitGame
 };
+
+let restartbutton = {
+    text: "Aloita alusta",
+    x: 5,
+    y: 250,
+    width: 300,
+    height: 100,
+    action: restartGame
+}
+
+function continueGame() {
+    paused = false
+}
+
+function exitGame() {
+    window.location.pathname = `/index.html`
+}
+
+function restartGame() {
+    location.reload()
+}
 
 canvas.addEventListener('click', function(evt) {
     let mousePos = getMousePos(canvas, evt);
   
-    if (isInside(mousePos, continuebutton)) {
-        paused = false;
-    } else if (isInside(mousePos, exitbutton)) {
-        window.location.pathname = `/index.html`
-    } else {
-        return
+    for (const currentButton of displayedButtons) {
+        if (isInside(mousePos, currentButton)) {
+            currentButton.action()
+        }
     }
+
 }, false);
   
-function continueButton(continuebutton) {
-    ctx.fillText('Jatka', continuebutton.x, continuebutton.y + 64);
+function createButtons() {
+    for (const currentButton of displayedButtons) {
+        ctx.fillText(currentButton.text, currentButton.x, currentButton.y + 64);
+    }
 }
-
-function exitButton(exitbutton) {
-    ctx.fillText('Poistu', exitbutton.x, exitbutton.y + 64);
-}
-
 
 function drawPauseScreen() {
     ctx.font = "48px Arial";
-    ctx.fillText("Paused", 5, 200);
-    continueButton(continuebutton);
-    exitButton(exitbutton);
+    ctx.fillText("Tauko", 5, 200);
+    createButtons()
+}
+
+function drawEndScreen() {
+    ctx.font = "48px Arial";
+    ctx.fillText("Häivisit pelin", 5, 200);
+    createButtons()
 }
 
 function drawPowerups() {
