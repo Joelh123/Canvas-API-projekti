@@ -5,6 +5,8 @@ const bulletImage = document.getElementById('bulletImage');
 const bulletPierceImage = document.getElementById("bulletPierceImage")
 const bulletSizeImage = document.getElementById("bulletSizeImage")
 const bulletSpeedImage = document.getElementById("bulletSpeedImage")
+const invaderBullet = document.getElementById("invaderBullet")
+
 
 let gameOver = false;
 let score = 0;
@@ -180,7 +182,7 @@ function detectEnemies() {
 
 function enemyFireBullet(x, y) {
     enemyBullets.push({
-        image: bulletImage,
+        image: invaderBullet,
         x: x,
         y: y,
         w: 15,

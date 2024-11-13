@@ -41,7 +41,7 @@ body {
     border-radius: 5px;
 }
 
-#playerImage, #bulletImage, #bulletPierceImage, #bulletSpeedImage, #bulletSizeImage, #enemyImage {
+#playerImage, #bulletImage, #bulletPierceImage, #bulletSpeedImage, #bulletSizeImage, #enemyImage, #invaderBullet {
     display: none;
 }
 
