@@ -159,7 +159,7 @@ function detectEnemies() {
             continue;
         }
 
-        if (Math.floor(Math.random() * 2500) === 1) {
+        if (Math.floor(Math.random() * 3000) === 1) {
             enemyFireBullet(enemy.x + enemy.w / 2, enemy.y + enemy.h)
         }
 
@@ -280,7 +280,6 @@ function detectObstacles() {
                         box.y += 1000;
                         box.x += 1000;
                     }   if (bullet.pierceCount <= 0) {
-                        bulletFired = false;
                         bullet.x = player.x + player.w / 2;
                         bullet.y = player.y;
                         return;
