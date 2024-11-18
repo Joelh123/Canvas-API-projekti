@@ -386,16 +386,21 @@ function keyDown(e){
 }
 
 function bulletSpeedUp() {
-    bullet.speed += 2
+    if (bullet.speed <= 20) {
+        bullet.speed += 2
+    }
 }
 
 function bulletSizeUp() {
-    bullet.w += 2
-    bullet.h += 1
+    if (bullet.w <= 25 && bullet.h <= 30)
+        bullet.w += 2
+        bullet.h += 1
 }
 
 function bulletPierceUp() {
-    bullet.pierceLvl += 1
+    if (bullet.pierceLvl < 6) {
+        bullet.pierceLvl += 1
+    }
 }
 
 function dropPowerup(x, y) {
