@@ -274,16 +274,14 @@ function detectObstacles() {
                 && box.y < enemyBullet.y + enemyBullet.h) 
                 {   enemyBullets.splice(enemyBullets.indexOf(enemyBullet), 1)
                     box.health -= 1;
-                    bullet.pierceCount -= 1;
                     box.flashTime = 10;
                     if (box.health <= 0) {
                         box.y += 1000;
                         box.x += 1000;
-                    }   if (bullet.pierceCount <= 0) {
-                        bullet.x = player.x + player.w / 2;
-                        bullet.y = player.y;
-                        return;
-                 }
+                    }
+            }
+            if (enemyBullet.y >= canvas.h) {
+                enemyBullets.splice(enemyBullets.indexOf(enemyBullet), 1)
             }
         }
     }
