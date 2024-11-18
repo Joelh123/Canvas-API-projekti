@@ -486,7 +486,7 @@ function continueGame() {
 }
 
 function exitGame() {
-    window.location.pathname = `/index.html`
+    window.location.pathname = `/Canvas-API-projekti/index.html`
 }
 
 function restartGame() {
